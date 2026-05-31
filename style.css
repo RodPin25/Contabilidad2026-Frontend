@@ -1,0 +1,165 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f0f2f5;
+    color: #333;
+}
+
+/* ── ENCABEZADO ─────────────────────────────────────────── */
+.encabezado {
+    background-color: #0d3b5e;
+    color: white;
+    padding: 18px 40px;
+}
+
+.encabezado h1 {
+    font-size: 24px;
+    margin-bottom: 6px;
+}
+
+.encabezado p {
+    font-size: 13px;
+    opacity: 0.85;
+}
+
+/* ── CONTENEDOR ─────────────────────────────────────────── */
+.contenedor {
+    background: white;
+    margin: 20px 40px;
+    padding: 20px 24px;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+.contenedor h2 {
+    font-size: 16px;
+    margin-bottom: 14px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #e0e0e0;
+    color: #0d3b5e;
+}
+
+/* ── COLORES DE TÍTULOS POR SECCIÓN ─────────────────────── */
+.tabla-activo  { color: #0d6e3f !important; border-color: #0d6e3f !important; }
+.tabla-pasivo  { color: #8b1a1a !important; border-color: #8b1a1a !important; }
+.tabla-capital { color: #5a2d82 !important; border-color: #5a2d82 !important; }
+
+/* ── FORMULARIO ─────────────────────────────────────────── */
+.fila-form {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 10px;
+}
+
+.fila-form select,
+.fila-form input {
+    padding: 8px 12px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 13px;
+    flex: 1;
+    min-width: 160px;
+}
+
+.fila-form select:focus,
+.fila-form input:focus {
+    outline: none;
+    border-color: #0d3b5e;
+}
+
+button {
+    background-color: #0d3b5e;
+    color: white;
+    padding: 8px 20px;
+    border: none;
+    border-radius: 6px;
+    font-size: 13px;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+button:hover { background-color: #092d48; }
+
+.btn-eliminar {
+    background-color: #c0392b;
+    padding: 5px 12px;
+    font-size: 12px;
+}
+
+.btn-eliminar:hover { background-color: #96281b; }
+
+/* ── RESUMEN GRID ────────────────────────────────────────── */
+.resumen-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 12px;
+}
+
+.resumen-card {
+    border-radius: 8px;
+    padding: 14px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.resumen-label {
+    font-size: 12px;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.resumen-monto {
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.resumen-card.activo       { background: #e8f5ee; color: #0d6e3f; }
+.resumen-card.total-activo { background: #0d6e3f; color: white; }
+.resumen-card.pasivo       { background: #fdecea; color: #8b1a1a; }
+.resumen-card.capital      { background: #f3eafa; color: #5a2d82; }
+.resumen-card.total-pasivo { background: #8b1a1a; color: white; }
+.resumen-card.equilibrado  { background: #0d3b5e; color: white; }
+.resumen-card.desequilibrado { background: #e67e22; color: white; }
+
+/* ── TABLA ───────────────────────────────────────────────── */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+    margin-top: 8px;
+}
+
+th {
+    background-color: #0d3b5e;
+    color: white;
+    padding: 10px 12px;
+    text-align: left;
+}
+
+td {
+    padding: 9px 12px;
+    border-bottom: 1px solid #eee;
+}
+
+tr:nth-child(even) { background-color: #f9f9f9; }
+tr:hover           { background-color: #eef4fb; }
+
+.fila-total {
+    background-color: #f0f0f0 !important;
+    font-weight: bold;
+}
+
+.vacio {
+    color: #999;
+    font-style: italic;
+    font-size: 13px;
+    margin-top: 6px;
+}
