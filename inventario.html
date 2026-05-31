@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Distribuidora Don Bosco</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+    <!-- ENCABEZADO -->
+    <div class="encabezado">
+        <h1>{{ empresa.nombre }}</h1>
+        <p><strong>NIT:</strong> {{ empresa.nit }} &nbsp;|&nbsp;
+           <strong>Giro:</strong> {{ empresa.giro }} &nbsp;|&nbsp;
+           <strong>Dirección:</strong> {{ empresa.direccion }}</p>
+    </div>
+
+    <!-- FORMULARIO AGREGAR -->
+    <div class="contenedor">
+        <h2>Agregar cuenta al inventario</h2>
+        <form action="/agregar" method="POST">
+            <div class="fila-form">
+                <select name="idTipoCuenta" required>
+                    <option value="" disabled selected>-- Selecciona sección --</option>
+                    {% for tipo in tipos %}
+                    <option value="{{ tipo[0] }}">{{ tipo[1] }}</option>
+                    {% endfor %}
+                </select>
+                <input type="text"   name="nombre"       placeholder="Nombre de la cuenta" required>
+            </div>
+            <div class="fila-form">
+                <input type="text"   name="descripcion"  placeholder="Descripción detallada" required>
+                <input type="number" name="monto"        placeholder="Monto (Q)" step="0.01" min="0" required>
+                <button type="submit">➕ Agregar</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- RESUMEN TOTALES -->
+    {% set total_ac  = datos['Activo Corriente']    | sum(attribute='monto') %}
+    {% set total_anc = datos['Activo No Corriente'] | sum(attribute='monto') %}
+    {% set total_pc  = datos['Pasivo Corriente']    | sum(attribute='monto') %}
+    {% set total_pnc = datos['Pasivo No Corriente'] | sum(attribute='monto') %}
+    {% set total_cap = datos['Capital Contable']    | sum(attribute='monto') %}
+    {% set total_activo = total_ac + total_anc %}
+    {% set total_pasivo = total_pc + total_pnc + total_cap %}
+
+    <div class="contenedor">
+        <h2>Resumen del balance</h2>
+        <div class="resumen-grid">
+            <div class="resumen-card activo">
+                <span class="resumen-label">Activo corriente</span>
+                <span class="resumen-monto">Q {{ "%.2f"|format(total_ac) }}</span>
+            </div>
+            <div class="resumen-card activo">
+                <span class="resumen-label">Activo no corriente</span>
+                <span class="resumen-monto">Q {{ "%.2f"|format(total_anc) }}</span>
+            </div>
+            <div class="resumen-card total-activo">
+                <span class="resumen-label">Total activo</span>
+                <span class="resumen-monto">Q {{ "%.2f"|format(total_activo) }}</span>
+            </div>
+            <div class="resumen-card pasivo">
+                <span class="resumen-label">Pasivo corriente</span>
+                <span class="resumen-monto">Q {{ "%.2f"|format(total_pc) }}</span>
+            </div>
+            <div class="resumen-card pasivo">
+                <span class="resumen-label">Pasivo no corriente</span>
+                <span class="resumen-monto">Q {{ "%.2f"|format(total_pnc) }}</span>
+            </div>
+            <div class="resumen-card capital">
+                <span class="resumen-label">Capital contable</span>
+                <span class="resumen-monto">Q {{ "%.2f"|format(total_cap) }}</span>
+            </div>
+            <div class="resumen-card total-pasivo">
+                <span class="resumen-label">Total pasivo + capital</span>
+                <span class="resumen-monto">Q {{ "%.2f"|format(total_pasivo) }}</span>
+            </div>
+            <div class="resumen-card {% if total_activo == total_pasivo %}equilibrado{% else %}desequilibrado{% endif %}">
+                <span class="resumen-label">Estado del balance</span>
+                <span class="resumen-monto">
+                    {% if total_activo == total_pasivo %}✅ Cuadrado{% else %}⚠️ Descuadrado{% endif %}
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <!-- TABLAS POR SECCIÓN -->
+    {% set secciones = [
+        ('Activo Corriente',    'tabla-activo'),
+        ('Activo No Corriente', 'tabla-activo'),
+        ('Pasivo Corriente',    'tabla-pasivo'),
+        ('Pasivo No Corriente', 'tabla-pasivo'),
+        ('Capital Contable',    'tabla-capital')
+    ] %}
+
+    {% for titulo, clase in secciones %}
+    <div class="contenedor">
+        <h2 class="{{ clase }}">{{ titulo }}</h2>
+        {% if datos[titulo] %}
+        <table>
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Nombre</th>
+                    <th>Descripción</th>
+                    <th>Monto (Q)</th>
+                    <th>Acción</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in datos[titulo] %}
+                <tr>
+                    <td>{{ loop.index }}</td>
+                    <td>{{ item.nombre }}</td>
+                    <td>{{ item.descripcion }}</td>
+                    <td>Q {{ "%.2f"|format(item.monto) }}</td>
+                    <td>
+                        <form action="/eliminar" method="POST" style="margin:0">
+                            <input type="hidden" name="idCuenta" value="{{ item.id }}">
+                            <button type="submit" class="btn-eliminar">🗑 Eliminar</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+                <tr class="fila-total">
+                    <td colspan="3"><strong>Total {{ titulo }}</strong></td>
+                    <td><strong>Q {{ "%.2f"|format(datos[titulo] | sum(attribute='monto')) }}</strong></td>
+                    <td></td>
+                </tr>
+            </tbody>
+        </table>
+        {% else %}
+        <p class="vacio">No hay registros en esta sección.</p>
+        {% endif %}
+    </div>
+    {% endfor %}
+
+</body>
+</html>
