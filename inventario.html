@@ -18,7 +18,7 @@
     <!-- FORMULARIO AGREGAR -->
     <div class="contenedor">
         <h2>Agregar cuenta al inventario</h2>
-        <form action="/agregar" method="POST">
+        <form action="/inventario/agregar" method="POST">
             <div class="fila-form">
                 <select name="idTipoCuenta" required>
                     <option value="" disabled selected>-- Selecciona sección --</option>
@@ -116,7 +116,7 @@
                     <td>{{ item.descripcion }}</td>
                     <td>Q {{ "%.2f"|format(item.monto) }}</td>
                     <td>
-                        <form action="/eliminar" method="POST" style="margin:0">
+                        <form action="/inventario/eliminar" method="POST" style="margin:0">
                             <input type="hidden" name="idCuenta" value="{{ item.id }}">
                             <button type="submit" class="btn-eliminar">🗑 Eliminar</button>
                         </form>
@@ -136,5 +136,52 @@
     </div>
     {% endfor %}
 
+    <!-- PARTIDA DE APERTURA -->
+<div class="contenedor">
+    <h2>Partida de Apertura — Libro Diario</h2>
+
+    <!-- Botón para generar -->
+    <form action="/inventario/partida-apertura" method="POST" style="margin-bottom: 16px;">
+        <button type="submit">📒 Generar Partida No. 1</button>
+    </form>
+
+    {% if partida %}
+    <p style="color: #0d6e3f; font-weight: bold; margin-bottom: 12px;">
+        ✅ Partida No. {{ partida[1] }} — {{ partida[2] }} — Fecha: {{ partida[3] }}
+    </p>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Cuenta</th>
+                <th>Debe (Q)</th>
+                <th>Haber (Q)</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for cuenta in cuentas_partida %}
+            <tr>
+                <td>{{ cuenta[0] }}</td>
+                {% if cuenta[0] in ['Activo Corriente', 'Activo No Corriente'] %}
+                <td>Q {{ "%.2f"|format(cuenta[1]) }}</td>
+                <td>—</td>
+                {% else %}
+                <td>—</td>
+                <td>Q {{ "%.2f"|format(cuenta[1]) }}</td>
+                {% endif %}
+            </tr>
+            {% endfor %}
+            <tr class="fila-total">
+                <td><strong>TOTALES</strong></td>
+                <td><strong>Q {{ "%.2f"|format(cuentas_partida | selectattr('0', 'in', ['Activo Corriente', 'Activo No Corriente']) | sum(attribute=1)) }}</strong></td>
+                <td><strong>Q {{ "%.2f"|format(cuentas_partida | selectattr('0', 'in', ['Pasivo Corriente', 'Pasivo No Corriente', 'Capital Contable']) | sum(attribute=1)) }}</strong></td>
+            </tr>
+        </tbody>
+    </table>
+
+    {% else %}
+    <p class="vacio">Aún no se ha generado la partida de apertura.</p>
+    {% endif %}
+</div>
 </body>
 </html>
