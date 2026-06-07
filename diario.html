@@ -111,9 +111,9 @@
         <div class="col">
             <label for="tipoPartida">Tipo de Partida:</label>
             <select id="tipoPartida">
-                <option value="Diario">Diario</option>
+                <option value="Normal">Diario (Normal)</option>
                 <option value="Apertura">Apertura</option>
-                <option value="Regularizacion_IVA">Regularización IVA</option>
+                <option value="Regularizacion">Regularización IVA</option>
                 <option value="Cierre">Cierre</option>
             </select>
         </div>
@@ -128,8 +128,7 @@
     <div class="row" style="background: #ecf0f1; padding: 15px; border-radius: 4px;">
         <div class="col" style="flex: 2;">
             <label for="codigoCuenta">Cuenta Contable Real:</label>
-            <select id="codigoCuenta">
-                </select>
+            <select id="codigoCuenta"></select>
         </div>
         <div class="col">
             <label for="montoDebe">Debe (Q):</label>
@@ -162,11 +161,13 @@
 
 <script>
     let detallesPartida = [];
+    // URL base apuntando al puerto oficial 5000 de Flask del equipo
+    const API_BASE_URL = 'http://127.0.0.1:5000';
 
-    // Carga las cuentas reales de la tabla de la DB
+    // Carga las cuentas reales mapeadas desde la logica de Sochito
     async function cargarCuentas() {
         try {
-            const response = await fetch('http://127.0.0.1:8000/cuentas-disponibles/');
+            const response = await fetch(`${API_BASE_URL}/cuentas-disponibles`);
             if (!response.ok) throw new Error("Error al obtener cuentas");
             
             const cuentas = await response.json();
@@ -188,11 +189,10 @@
                 select.appendChild(option);
             });
         } catch (error) {
-            alert("No se pudo cargar el catálogo de cuentas. Revisa la conexión con el servidor.");
+            alert("No se pudo cargar el catálogo de cuentas. Revisa la conexión con Laragon.");
         }
     }
 
-    // Evento inicializador
     window.onload = function() {
         document.getElementById('fecha').valueAsDate = new Date();
         cargarCuentas();
@@ -200,12 +200,12 @@
 
     function agregarFila() {
         const selectElement = document.getElementById('codigoCuenta');
-        const codigo = selectElement.value;
+        const idCuenta = parseInt(selectElement.value);
         const textoCuenta = selectElement.options[selectElement.selectedIndex].text;
         const debe = parseFloat(document.getElementById('montoDebe').value) || 0;
         const haber = parseFloat(document.getElementById('montoHaber').value) || 0;
 
-        if (!codigo) {
+        if (!idCuenta) {
             alert("Por favor selecciona una cuenta válida.");
             return;
         }
@@ -215,9 +215,10 @@
             return;
         }
 
+        // Mapeamos idCuenta de forma estricta para la tabla intermedia AsientoDiario
         detallesPartida.push({
-            codigo_cuenta: codigo,
-            nombre_pantalla: textoCuenta, // Auxiliar para pintar la tabla
+            idCuenta: idCuenta,
+            nombre_pantalla: textoCuenta,
             debe: debe,
             haber: haber
         });
@@ -255,21 +256,20 @@
             return;
         }
 
-        // Estructura limpia para enviar a PartidaInput de Pydantic
         const payload = {
             numero_partida: parseInt(document.getElementById('numPartida').value),
             fecha: document.getElementById('fecha').value,
             descripcion: document.getElementById('descripcion').value,
             tipo_partida: document.getElementById('tipoPartida').value,
             detalles: detallesPartida.map(d => ({
-                codigo_cuenta: d.codigo_cuenta,
+                idCuenta: d.idCuenta,
                 debe: d.debe,
                 haber: d.haber
             }))
         };
 
         try {
-            const response = await fetch('http://127.0.0.1:8000/partidas/', {
+            const response = await fetch(`${API_BASE_URL}/partidas`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -286,11 +286,11 @@
                 actualizarTabla();
                 document.getElementById('numPartida').value = parseInt(document.getElementById('numPartida').value) + 1;
             } else {
-                alert(`Error del Servidor: ${data.detail}`);
+                alert(`Error del Servidor: ${data.message || data.detail}`);
             }
 
         } catch (error) {
-            alert("Error en la conexión con el backend.");
+            alert("Error en la conexión con el backend en Flask.");
         }
     }
 </script>
