@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema Contable DON BOSCO - Registro de Partidas</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f6f9;
+            margin: 0;
+            padding: 20px;
+            color: #333;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        h2 {
+            color: #2c3e50;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+            margin-top: 0;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #34495e;
+        }
+        input, select, textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        .row {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        .col {
+            flex: 1;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: left;
+        }
+        th {
+            background-color: #34495e;
+            color: white;
+        }
+        .btn {
+            background-color: #3498db;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .btn:hover {
+            background-color: #2980b9;
+        }
+        .btn-success {
+            background-color: #2ecc71;
+            width: 100%;
+            padding: 12px;
+            font-size: 16px;
+            margin-top: 20px;
+        }
+        .btn-success:hover {
+            background-color: #27ae60;
+        }
+        .btn-danger {
+            background-color: #e74c3c;
+        }
+        .btn-danger:hover {
+            background-color: #c0392b;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Registro de Partida Diaria</h2>
+    
+    <div class="row">
+        <div class="col">
+            <label for="numPartida">Número de Partida:</label>
+            <input type="number" id="numPartida" value="1" min="1">
+        </div>
+        <div class="col">
+            <label for="fecha">Fecha:</label>
+            <input type="date" id="fecha">
+        </div>
+        <div class="col">
+            <label for="tipoPartida">Tipo de Partida:</label>
+            <select id="tipoPartida">
+                <option value="Normal">Diario (Normal)</option>
+                <option value="Apertura">Apertura</option>
+                <option value="Regularizacion">Regularización IVA</option>
+                <option value="Cierre">Cierre</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label for="descripcion">Descripción:</label>
+        <textarea id="descripcion" rows="2" placeholder="Ej. Venta de mercadería según factura..."></textarea>
+    </div>
+
+    <h3>Cuentas de la Partida</h3>
+    <div class="row" style="background: #ecf0f1; padding: 15px; border-radius: 4px;">
+        <div class="col" style="flex: 2;">
+            <label for="codigoCuenta">Cuenta Contable Real:</label>
+            <select id="codigoCuenta"></select>
+        </div>
+        <div class="col">
+            <label for="montoDebe">Debe (Q):</label>
+            <input type="number" id="montoDebe" value="0.00" step="0.01">
+        </div>
+        <div class="col">
+            <label for="montoHaber">Haber (Q):</label>
+            <input type="number" id="montoHaber" value="0.00" step="0.01">
+        </div>
+        <div class="col" style="display: flex; align-items: flex-end;">
+            <button class="btn" type="button" onclick="agregarFila()">Agregar</button>
+        </div>
+    </div>
+
+    <table id="tablaDetalles">
+        <thead>
+            <tr>
+                <th>Código Cuenta</th>
+                <th>Debe (Q)</th>
+                <th>Haber (Q)</th>
+                <th>Acción</th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+
+    <button class="btn btn-success" type="button" onclick="guardarPartida()">Guardar Partida DB</button>
+</div>
+
+<script>
+    let detallesPartida = [];
+    // URL base apuntando al puerto oficial 5000 de Flask del equipo
+    const API_BASE_URL = 'http://127.0.0.1:5000';
+
+    // Carga las cuentas reales mapeadas desde la logica de Sochito
+    async function cargarCuentas() {
+        try {
+            const response = await fetch(`${API_BASE_URL}/cuentas-disponibles`);
+            if (!response.ok) throw new Error("Error al obtener cuentas");
+            
+            const cuentas = await response.json();
+            const select = document.getElementById('codigoCuenta');
+            select.innerHTML = '';
+            
+            if(cuentas.length === 0) {
+                const option = document.createElement('option');
+                option.text = "No hay cuentas disponibles. Registra una en Inventario.";
+                option.disabled = true;
+                select.appendChild(option);
+                return;
+            }
+
+            cuentas.forEach(c => {
+                const option = document.createElement('option');
+                option.value = c.idCuenta;
+                option.text = `${c.idCuenta} - ${c.nombreCuenta}`;
+                select.appendChild(option);
+            });
+        } catch (error) {
+            alert("No se pudo cargar el catálogo de cuentas. Revisa la conexión con Laragon.");
+        }
+    }
+
+    window.onload = function() {
+        document.getElementById('fecha').valueAsDate = new Date();
+        cargarCuentas();
+    };
+
+    function agregarFila() {
+        const selectElement = document.getElementById('codigoCuenta');
+        const idCuenta = parseInt(selectElement.value);
+        const textoCuenta = selectElement.options[selectElement.selectedIndex].text;
+        const debe = parseFloat(document.getElementById('montoDebe').value) || 0;
+        const haber = parseFloat(document.getElementById('montoHaber').value) || 0;
+
+        if (!idCuenta) {
+            alert("Por favor selecciona una cuenta válida.");
+            return;
+        }
+
+        if (debe === 0 && haber === 0) {
+            alert("El monto del Debe o del Haber debe ser mayor a 0");
+            return;
+        }
+
+        // Mapeamos idCuenta de forma estricta para la tabla intermedia AsientoDiario
+        detallesPartida.push({
+            idCuenta: idCuenta,
+            nombre_pantalla: textoCuenta,
+            debe: debe,
+            haber: haber
+        });
+
+        actualizarTabla();
+
+        document.getElementById('montoDebe').value = "0.00";
+        document.getElementById('montoHaber').value = "0.00";
+    }
+
+    function actualizarTabla() {
+        const tbody = document.querySelector('#tablaDetalles tbody');
+        tbody.innerHTML = '';
+
+        detallesPartida.forEach((detalle, index) => {
+            const fila = document.createElement('tr');
+            fila.innerHTML = `
+                <td>${detalle.nombre_pantalla}</td>
+                <td>Q${detalle.debe.toFixed(2)}</td>
+                <td>Q${detalle.haber.toFixed(2)}</td>
+                <td><button class="btn btn-danger" onclick="eliminarFila(${index})">Eliminar</button></td>
+            `;
+            tbody.appendChild(fila);
+        });
+    }
+
+    function eliminarFila(index) {
+        detallesPartida.splice(index, 1);
+        actualizarTabla();
+    }
+
+    async function guardarPartida() {
+        if (detallesPartida.length < 2) {
+            alert("Una partida debe tener al menos dos movimientos (Partida Doble).");
+            return;
+        }
+
+        const payload = {
+            numero_partida: parseInt(document.getElementById('numPartida').value),
+            fecha: document.getElementById('fecha').value,
+            descripcion: document.getElementById('descripcion').value,
+            tipo_partida: document.getElementById('tipoPartida').value,
+            detalles: detallesPartida.map(d => ({
+                idCuenta: d.idCuenta,
+                debe: d.debe,
+                haber: d.haber
+            }))
+        };
+
+        try {
+            const response = await fetch(`${API_BASE_URL}/partidas`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(payload)
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                alert(`Todo correcto y yo que me alegro: ${data.message}`);
+                document.getElementById('descripcion').value = '';
+                detallesPartida = [];
+                actualizarTabla();
+                document.getElementById('numPartida').value = parseInt(document.getElementById('numPartida').value) + 1;
+            } else {
+                alert(`Error del Servidor: ${data.message || data.detail}`);
+            }
+
+        } catch (error) {
+            alert("Error en la conexión con el backend en Flask.");
+        }
+    }
+</script>
+
+</body>
+</html>
