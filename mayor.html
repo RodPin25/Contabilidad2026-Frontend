@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema Contable DON BOSCO - Libro Mayor</title>
+    <style>
+        :root {
+            --azul-oscuro: #2c3e50;
+            --azul: #3498db;
+            --azul-hover: #2980b9;
+            --verde: #27ae60;
+            --rojo: #c0392b;
+            --gris-fondo: #f4f6f9;
+            --gris-borde: #dfe4ea;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 20px;
+            background: var(--gris-fondo);
+            color: #333;
+            font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .panel {
+            margin-bottom: 20px;
+            padding: 24px;
+            border-radius: 8px;
+            background: #fff;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+
+        h1, h2, h3 {
+            color: var(--azul-oscuro);
+        }
+
+        h1 {
+            margin: 0;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--azul);
+        }
+
+        .subtitulo {
+            margin-bottom: 0;
+            color: #667;
+        }
+
+        .filtros {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr auto auto;
+            gap: 15px;
+            align-items: end;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #34495e;
+            font-weight: bold;
+        }
+
+        select, input, button {
+            min-height: 42px;
+            border-radius: 4px;
+            font: inherit;
+        }
+
+        select, input {
+            width: 100%;
+            padding: 8px 10px;
+            border: 1px solid #ccc;
+            background: #fff;
+        }
+
+        button {
+            padding: 9px 16px;
+            border: 0;
+            background: var(--azul);
+            color: #fff;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        button:hover {
+            background: var(--azul-hover);
+        }
+
+        button.secundario {
+            background: #7f8c8d;
+        }
+
+        .resumen {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+        }
+
+        .indicador {
+            padding: 18px;
+            border-left: 5px solid var(--azul);
+            border-radius: 6px;
+            background: #fff;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+        }
+
+        .indicador span {
+            display: block;
+            color: #667;
+            font-size: 14px;
+        }
+
+        .indicador strong {
+            display: block;
+            margin-top: 6px;
+            color: var(--azul-oscuro);
+            font-size: 24px;
+        }
+
+        .cuenta {
+            overflow: hidden;
+            margin-bottom: 22px;
+            border: 1px solid var(--gris-borde);
+            border-radius: 8px;
+            background: #fff;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.06);
+        }
+
+        .cuenta-encabezado {
+            display: flex;
+            justify-content: space-between;
+            gap: 20px;
+            padding: 18px 20px;
+            background: var(--azul-oscuro);
+            color: #fff;
+        }
+
+        .cuenta-encabezado h3 {
+            margin: 0;
+            color: #fff;
+        }
+
+        .cuenta-encabezado p {
+            margin: 5px 0 0;
+            color: #dbe7f0;
+        }
+
+        .saldo-final {
+            text-align: right;
+            white-space: nowrap;
+        }
+
+        .saldo-final strong {
+            display: block;
+            margin-top: 4px;
+            font-size: 22px;
+        }
+
+        .tabla-contenedor {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 11px 12px;
+            border-bottom: 1px solid var(--gris-borde);
+            text-align: left;
+        }
+
+        th {
+            background: #ecf0f1;
+            color: #34495e;
+        }
+
+        .numero {
+            text-align: right;
+            white-space: nowrap;
+        }
+
+        tfoot td {
+            background: #f7f9fa;
+            font-weight: bold;
+        }
+
+        .estado {
+            padding: 35px;
+            border-radius: 8px;
+            background: #fff;
+            color: #667;
+            text-align: center;
+        }
+
+        .estado.error {
+            color: var(--rojo);
+        }
+
+        .deudora {
+            color: var(--verde);
+        }
+
+        .acreedora {
+            color: var(--azul);
+        }
+
+        @media (max-width: 850px) {
+            .filtros, .resumen {
+                grid-template-columns: 1fr;
+            }
+
+            .cuenta-encabezado {
+                display: block;
+            }
+
+            .saldo-final {
+                margin-top: 15px;
+                text-align: left;
+            }
+        }
+    </style>
+</head>
+<body>
+<main class="container">
+    <section class="panel">
+        <h1>Libro Mayor</h1>
+        <p class="subtitulo">Movimientos contables agrupados por cuenta y ordenados cronológicamente.</p>
+    </section>
+
+    <section class="panel">
+        <div class="filtros">
+            <div>
+                <label for="cuenta">Cuenta contable</label>
+                <select id="cuenta">
+                    <option value="">Todas las cuentas</option>
+                </select>
+            </div>
+            <div>
+                <label for="fechaInicio">Fecha inicial</label>
+                <input id="fechaInicio" type="date">
+            </div>
+            <div>
+                <label for="fechaFin">Fecha final</label>
+                <input id="fechaFin" type="date">
+            </div>
+            <button type="button" onclick="consultarMayor()">Consultar</button>
+            <button class="secundario" type="button" onclick="limpiarFiltros()">Limpiar</button>
+        </div>
+    </section>
+
+    <section class="resumen" aria-label="Resumen del Libro Mayor">
+        <article class="indicador">
+            <span>Cuentas mostradas</span>
+            <strong id="totalCuentas">0</strong>
+        </article>
+        <article class="indicador">
+            <span>Total Debe</span>
+            <strong id="totalDebe">Q0.00</strong>
+        </article>
+        <article class="indicador">
+            <span>Total Haber</span>
+            <strong id="totalHaber">Q0.00</strong>
+        </article>
+    </section>
+
+    <section id="resultado" style="margin-top: 20px;">
+        <div class="estado">Cargando Libro Mayor...</div>
+    </section>
+</main>
+
+<script>
+    const API_BASE_URL = "http://127.0.0.1:5000";
+    const formatoMoneda = new Intl.NumberFormat("es-GT", {
+        style: "currency",
+        currency: "GTQ"
+    });
+
+    window.addEventListener("DOMContentLoaded", async () => {
+        await cargarCuentas();
+        await consultarMayor();
+    });
+
+    async function cargarCuentas() {
+        const select = document.getElementById("cuenta");
+        try {
+            const response = await fetch(`${API_BASE_URL}/libro-mayor/cuentas`);
+            const data = await obtenerRespuesta(response);
+
+            data.cuentas.forEach((cuenta) => {
+                const option = document.createElement("option");
+                option.value = cuenta.id_cuenta;
+                option.textContent = `${cuenta.id_cuenta} - ${cuenta.nombre_cuenta} (${cuenta.tipo_cuenta})`;
+                select.appendChild(option);
+            });
+        } catch (error) {
+            mostrarError(`No fue posible cargar las cuentas: ${error.message}`);
+        }
+    }
+
+    async function consultarMayor() {
+        mostrarEstado("Cargando Libro Mayor...");
+        try {
+            const parametros = new URLSearchParams();
+            const idCuenta = document.getElementById("cuenta").value;
+            const fechaInicio = document.getElementById("fechaInicio").value;
+            const fechaFin = document.getElementById("fechaFin").value;
+
+            if (idCuenta) parametros.set("id_cuenta", idCuenta);
+            if (fechaInicio) parametros.set("fecha_inicio", fechaInicio);
+            if (fechaFin) parametros.set("fecha_fin", fechaFin);
+
+            const query = parametros.toString() ? `?${parametros}` : "";
+            const response = await fetch(`${API_BASE_URL}/libro-mayor${query}`);
+            const data = await obtenerRespuesta(response);
+            renderizarMayor(data.libro_mayor);
+        } catch (error) {
+            mostrarError(error.message);
+        }
+    }
+
+    function renderizarMayor(cuentas) {
+        actualizarResumen(cuentas);
+        const resultado = document.getElementById("resultado");
+
+        if (cuentas.length === 0) {
+            resultado.innerHTML = '<div class="estado">No existen movimientos para los filtros seleccionados.</div>';
+            return;
+        }
+
+        resultado.innerHTML = cuentas.map((cuenta) => `
+            <article class="cuenta">
+                <header class="cuenta-encabezado">
+                    <div>
+                        <h3>${escapar(cuenta.id_cuenta)} - ${escapar(cuenta.nombre_cuenta)}</h3>
+                        <p>${escapar(cuenta.tipo_cuenta)} · Naturaleza ${escapar(cuenta.naturaleza)}</p>
+                    </div>
+                    <div class="saldo-final">
+                        Saldo final
+                        <strong class="${cuenta.naturaleza.toLowerCase()}">${formatoMoneda.format(cuenta.saldo_final)}</strong>
+                    </div>
+                </header>
+                <div class="tabla-contenedor">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Fecha</th>
+                                <th>Partida</th>
+                                <th>Descripción</th>
+                                <th class="numero">Debe</th>
+                                <th class="numero">Haber</th>
+                                <th class="numero">Saldo</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${cuenta.movimientos.map((movimiento) => `
+                                <tr>
+                                    <td>${escapar(movimiento.fecha)}</td>
+                                    <td>${escapar(movimiento.numero_partida)}</td>
+                                    <td>${escapar(movimiento.descripcion)}</td>
+                                    <td class="numero">${formatoMoneda.format(movimiento.debe)}</td>
+                                    <td class="numero">${formatoMoneda.format(movimiento.haber)}</td>
+                                    <td class="numero">${formatoMoneda.format(movimiento.saldo)}</td>
+                                </tr>
+                            `).join("")}
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <td colspan="3">Totales</td>
+                                <td class="numero">${formatoMoneda.format(cuenta.total_debe)}</td>
+                                <td class="numero">${formatoMoneda.format(cuenta.total_haber)}</td>
+                                <td class="numero">${formatoMoneda.format(cuenta.saldo_final)}</td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </article>
+        `).join("");
+    }
+
+    function actualizarResumen(cuentas) {
+        const totalDebe = cuentas.reduce((total, cuenta) => total + cuenta.total_debe, 0);
+        const totalHaber = cuentas.reduce((total, cuenta) => total + cuenta.total_haber, 0);
+
+        document.getElementById("totalCuentas").textContent = cuentas.length;
+        document.getElementById("totalDebe").textContent = formatoMoneda.format(totalDebe);
+        document.getElementById("totalHaber").textContent = formatoMoneda.format(totalHaber);
+    }
+
+    function limpiarFiltros() {
+        document.getElementById("cuenta").value = "";
+        document.getElementById("fechaInicio").value = "";
+        document.getElementById("fechaFin").value = "";
+        consultarMayor();
+    }
+
+    async function obtenerRespuesta(response) {
+        const data = await response.json();
+        if (!response.ok) {
+            throw new Error(data.message || "El servidor no pudo procesar la solicitud.");
+        }
+        return data;
+    }
+
+    function mostrarEstado(mensaje) {
+        document.getElementById("resultado").innerHTML = `<div class="estado">${escapar(mensaje)}</div>`;
+    }
+
+    function mostrarError(mensaje) {
+        document.getElementById("resultado").innerHTML = `<div class="estado error">${escapar(mensaje)}</div>`;
+        actualizarResumen([]);
+    }
+
+    function escapar(valor) {
+        return String(valor ?? "")
+            .replaceAll("&", "&amp;")
+            .replaceAll("<", "&lt;")
+            .replaceAll(">", "&gt;")
+            .replaceAll('"', "&quot;")
+            .replaceAll("'", "&#039;");
+    }
+</script>
+</body>
+</html>
