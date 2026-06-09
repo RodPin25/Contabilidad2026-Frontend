@@ -294,10 +294,11 @@
     async function cargarCuentas() {
         const select = document.getElementById("cuenta");
         try {
-            const response = await fetch(`${API_BASE_URL}/libro-mayor/cuentas`);
+            const response = await fetch(`${API_BASE_URL}/api/libro-mayor/cuentas`);
             const data = await obtenerRespuesta(response);
 
-            data.cuentas.forEach((cuenta) => {
+            const cuentas = Array.isArray(data.cuentas) ? data.cuentas : [];
+            cuentas.forEach((cuenta) => {
                 const option = document.createElement("option");
                 option.value = cuenta.id_cuenta;
                 option.textContent = `${cuenta.id_cuenta} - ${cuenta.nombre_cuenta} (${cuenta.tipo_cuenta})`;
@@ -321,9 +322,9 @@
             if (fechaFin) parametros.set("fecha_fin", fechaFin);
 
             const query = parametros.toString() ? `?${parametros}` : "";
-            const response = await fetch(`${API_BASE_URL}/libro-mayor${query}`);
+            const response = await fetch(`${API_BASE_URL}/api/libro-mayor${query}`);
             const data = await obtenerRespuesta(response);
-            renderizarMayor(data.libro_mayor);
+            renderizarMayor(validarLibroMayor(data.libro_mayor));
         } catch (error) {
             mostrarError(error.message);
         }
@@ -338,16 +339,21 @@
             return;
         }
 
-        resultado.innerHTML = cuentas.map((cuenta) => `
+        resultado.innerHTML = cuentas.map((cuenta) => {
+            const naturaleza = cuenta.naturaleza || "Sin naturaleza";
+            const claseNaturaleza = naturaleza.toLowerCase().replaceAll(" ", "-");
+            const movimientos = Array.isArray(cuenta.movimientos) ? cuenta.movimientos : [];
+
+            return `
             <article class="cuenta">
                 <header class="cuenta-encabezado">
                     <div>
                         <h3>${escapar(cuenta.id_cuenta)} - ${escapar(cuenta.nombre_cuenta)}</h3>
-                        <p>${escapar(cuenta.tipo_cuenta)} · Naturaleza ${escapar(cuenta.naturaleza)}</p>
+                        <p>${escapar(cuenta.tipo_cuenta)} · Naturaleza ${escapar(naturaleza)}</p>
                     </div>
                     <div class="saldo-final">
                         Saldo final
-                        <strong class="${cuenta.naturaleza.toLowerCase()}">${formatoMoneda.format(cuenta.saldo_final)}</strong>
+                        <strong class="${claseNaturaleza}">${formatoMoneda.format(cuenta.saldo_final)}</strong>
                     </div>
                 </header>
                 <div class="tabla-contenedor">
@@ -363,7 +369,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            ${cuenta.movimientos.map((movimiento) => `
+                            ${movimientos.map((movimiento) => `
                                 <tr>
                                     <td>${escapar(movimiento.fecha)}</td>
                                     <td>${escapar(movimiento.numero_partida)}</td>
@@ -385,7 +391,8 @@
                     </table>
                 </div>
             </article>
-        `).join("");
+        `;
+        }).join("");
     }
 
     function actualizarResumen(cuentas) {
@@ -410,6 +417,27 @@
             throw new Error(data.message || "El servidor no pudo procesar la solicitud.");
         }
         return data;
+    }
+
+    function validarLibroMayor(libroMayor) {
+        if (!Array.isArray(libroMayor)) {
+            throw new Error("El backend no devolvió un Libro Mayor válido.");
+        }
+
+        const respuestaIncompatible = libroMayor.some((cuenta) =>
+            cuenta.id_cuenta === undefined ||
+            cuenta.saldo_final === undefined ||
+            !Array.isArray(cuenta.movimientos)
+        );
+
+        if (respuestaIncompatible) {
+            throw new Error(
+                "El backend está usando el resumen antiguo del Libro Diario. " +
+                "Debe registrar las rutas detalladas del Libro Mayor en /api/libro-mayor."
+            );
+        }
+
+        return libroMayor;
     }
 
     function mostrarEstado(mensaje) {
