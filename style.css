@@ -5,161 +5,217 @@
 }
 
 body {
-    font-family: Arial, sans-serif;
-    background-color: #f0f2f5;
-    color: #333;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f4f6f9; /* Fondo gris limpio unificado */
+    color: #2d3748; /* Texto suave unificado */
+    padding: 20px;
 }
 
-/* ── ENCABEZADO ─────────────────────────────────────────── */
+/* ── ENCABEZADO CON DEGRADADO DON BOSCO ── */
 .encabezado {
-    background-color: #0d3b5e;
+    background: linear-gradient(135deg, #0d3b5e 0%, #102a43 100%);
     color: white;
-    padding: 18px 40px;
+    padding: 24px 40px;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    margin-bottom: 20px;
 }
 
 .encabezado h1 {
-    font-size: 24px;
+    font-size: 26px;
     margin-bottom: 6px;
+    font-weight: 600;
 }
 
 .encabezado p {
     font-size: 13px;
     opacity: 0.85;
+    color: #dbe7f0;
 }
 
-/* ── CONTENEDOR ─────────────────────────────────────────── */
+/* ── CONTENEDORES / PANELES BLANCOS ── */
 .contenedor {
     background: white;
-    margin: 20px 40px;
-    padding: 20px 24px;
+    margin: 0 0 20px 0;
+    padding: 24px;
     border-radius: 10px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    border: 1px solid rgba(0,0,0,0.02);
 }
 
 .contenedor h2 {
-    font-size: 16px;
-    margin-bottom: 14px;
+    font-size: 17px;
+    margin-bottom: 16px;
     padding-bottom: 8px;
-    border-bottom: 2px solid #e0e0e0;
+    border-bottom: 2px solid #dfe4ea;
     color: #0d3b5e;
+    font-weight: 600;
 }
 
-/* ── COLORES DE TÍTULOS POR SECCIÓN ─────────────────────── */
-.tabla-activo  { color: #0d6e3f !important; border-color: #0d6e3f !important; }
-.tabla-pasivo  { color: #8b1a1a !important; border-color: #8b1a1a !important; }
-.tabla-capital { color: #5a2d82 !important; border-color: #5a2d82 !important; }
+/* ── COLORES DE TÍTULOS POR SECCIÓN Contable ── */
+.tabla-activo  { color: #27ae60 !important; border-color: #27ae60 !important; }
+.tabla-pasivo  { color: #3498db !important; border-color: #3498db !important; }
+.tabla-capital { color: #8e44ad !important; border-color: #8e44ad !important; }
 
-/* ── FORMULARIO ─────────────────────────────────────────── */
+/* ── ELEMENTOS DE FORMULARIO ESTILIZADOS ── */
 .fila-form {
     display: flex;
-    gap: 10px;
+    gap: 12px;
     flex-wrap: wrap;
     margin-bottom: 10px;
 }
 
 .fila-form select,
 .fila-form input {
-    padding: 8px 12px;
-    border: 1px solid #ccc;
+    padding: 10px 14px;
+    border: 1px solid #cbd5e1;
     border-radius: 6px;
     font-size: 13px;
     flex: 1;
     min-width: 160px;
+    background-color: #fff;
+    color: #334155;
+    transition: border-color 0.2s, box-shadow 0.2s;
 }
 
 .fila-form select:focus,
 .fila-form input:focus {
     outline: none;
-    border-color: #0d3b5e;
+    border-color: #3498db;
+    box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.15);
 }
 
+/* ── BOTONES PREMIUM ── */
 button {
     background-color: #0d3b5e;
     color: white;
-    padding: 8px 20px;
+    padding: 10px 22px;
     border: none;
     border-radius: 6px;
     font-size: 13px;
+    font-weight: 600;
     cursor: pointer;
     white-space: nowrap;
+    transition: background-color 0.2s, transform 0.1s;
+    min-height: 40px;
 }
 
-button:hover { background-color: #092d48; }
+button:hover { 
+    background-color: #092d48; 
+}
+
+button:active {
+    transform: scale(0.98);
+}
 
 .btn-eliminar {
     background-color: #c0392b;
-    padding: 5px 12px;
+    padding: 6px 14px;
     font-size: 12px;
+    min-height: auto;
 }
 
-.btn-eliminar:hover { background-color: #96281b; }
+.btn-eliminar:hover { 
+    background-color: #941b10; 
+}
 
-/* ── RESUMEN GRID ────────────────────────────────────────── */
+/* ── GRID DE TARJETAS INDICADORAS (DASHBOARD) ── */
 .resumen-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-    gap: 12px;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 16px;
 }
 
 .resumen-card {
-    border-radius: 8px;
-    padding: 14px 16px;
+    border-radius: 10px;
+    padding: 18px 20px;
     display: flex;
     flex-direction: column;
     gap: 6px;
+    background: white;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+    border-left: 5px solid #3498db;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.resumen-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0,0,0,0.05);
 }
 
 .resumen-label {
-    font-size: 12px;
-    font-weight: bold;
+    font-size: 11px;
+    font-weight: 700;
     text-transform: uppercase;
-    letter-spacing: 0.5px;
+    letter-spacing: 0.7px;
+    color: #64748b;
 }
 
 .resumen-monto {
-    font-size: 18px;
-    font-weight: bold;
+    font-size: 22px;
+    font-weight: 700;
+    color: #1e293b;
 }
 
-.resumen-card.activo       { background: #e8f5ee; color: #0d6e3f; }
-.resumen-card.total-activo { background: #0d6e3f; color: white; }
-.resumen-card.pasivo       { background: #fdecea; color: #8b1a1a; }
-.resumen-card.capital      { background: #f3eafa; color: #5a2d82; }
-.resumen-card.total-pasivo { background: #8b1a1a; color: white; }
-.resumen-card.equilibrado  { background: #0d3b5e; color: white; }
-.resumen-card.desequilibrado { background: #e67e22; color: white; }
+/* Variaciones de color para estados del balance */
+.resumen-card.activo         { background: #f0fdf4; color: #166534; border-left-color: #27ae60; }
+.resumen-card.total-activo   { background: #27ae60; color: white; border-left-color: #1b7a43; }
+.resumen-card.total-activo .resumen-label, .resumen-card.total-activo .resumen-monto { color: white; }
 
-/* ── TABLA ───────────────────────────────────────────────── */
+.resumen-card.pasivo         { background: #fef2f2; color: #991b1b; border-left-color: #cbd5e1; }
+.resumen-card.total-pasivo   { background: #3498db; color: white; border-left-color: #217dbb; }
+.resumen-card.total-pasivo .resumen-label, .resumen-card.total-pasivo .resumen-monto { color: white; }
+
+.resumen-card.capital        { background: #faf5ff; color: #6b21a8; border-left-color: #8e44ad; }
+.resumen-card.equilibrado    { background: #0d3b5e; color: white; border-left-color: #092d48; }
+.resumen-card.equilibrado .resumen-label, .resumen-card.equilibrado .resumen-monto { color: white; }
+.resumen-card.desequilibrado { background: #fff7ed; color: #c2410c; border-left-color: #f97316; }
+
+/* ── TABLAS RE-DISEÑADAS GEMELAS ── */
 table {
     width: 100%;
     border-collapse: collapse;
-    font-size: 13px;
-    margin-top: 8px;
+    font-size: 13.5px;
+    margin-top: 10px;
+    background: white;
 }
 
 th {
-    background-color: #0d3b5e;
-    color: white;
-    padding: 10px 12px;
+    background-color: #f1f5f9;
+    color: #334155;
+    padding: 12px 14px;
     text-align: left;
+    font-weight: 600;
+    border-bottom: 2px solid #dfe4ea;
 }
 
 td {
-    padding: 9px 12px;
-    border-bottom: 1px solid #eee;
+    padding: 12px 14px;
+    border-bottom: 1px solid #e2e8f0;
+    color: #475569;
 }
 
-tr:nth-child(even) { background-color: #f9f9f9; }
-tr:hover           { background-color: #eef4fb; }
+tr:nth-child(even) { 
+    background-color: #f8fafc; 
+}
+
+tr:hover { 
+    background-color: #f1f5f9; 
+}
 
 .fila-total {
-    background-color: #f0f0f0 !important;
+    background-color: #f8fafc !important;
     font-weight: bold;
+    color: #1e293b;
+    border-top: 2px solid #dfe4ea;
+    border-bottom: 2px solid #dfe4ea;
 }
 
 .vacio {
-    color: #999;
+    color: #64748b;
     font-style: italic;
     font-size: 13px;
     margin-top: 6px;
+    text-align: center;
+    padding: 10px;
 }

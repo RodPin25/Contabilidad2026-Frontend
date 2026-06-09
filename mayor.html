@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistema Contable DON BOSCO - Libro Mayor</title>
+    <title>Distribuidora Don Bosco - Libro Mayor</title>
     <style>
         :root {
-            --azul-oscuro: #2c3e50;
-            --azul: #3498db;
-            --azul-hover: #2980b9;
+            --azul-donbosco: #0d3b5e;
+            --azul-hover: #092d48;
+            --azul-acento: #3498db;
             --verde: #27ae60;
             --rojo: #c0392b;
             --gris-fondo: #f4f6f9;
@@ -17,13 +17,15 @@
 
         * {
             box-sizing: border-box;
+            margin: 0;
+            padding: 0;
         }
 
         body {
             margin: 0;
             padding: 20px;
             background: var(--gris-fondo);
-            color: #333;
+            color: #2d3748;
             font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
         }
 
@@ -32,27 +34,38 @@
             margin: 0 auto;
         }
 
-        .panel {
+        /* Encabezado con degradado idéntico al Inventario y Diario */
+        .encabezado-institucional {
+            background: linear-gradient(135deg, var(--azul-donbosco) 0%, #102a43 100%);
+            color: white;
+            padding: 24px 40px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
             margin-bottom: 20px;
-            padding: 24px;
-            border-radius: 8px;
-            background: #fff;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
         }
 
-        h1, h2, h3 {
-            color: var(--azul-oscuro);
-        }
-
-        h1 {
-            margin: 0;
-            padding-bottom: 10px;
-            border-bottom: 2px solid var(--azul);
+        .encabezado-institucional h1 {
+            font-size: 26px;
+            margin-bottom: 6px;
+            font-weight: 600;
+            color: #fff;
         }
 
         .subtitulo {
             margin-bottom: 0;
-            color: #667;
+            color: #dbe7f0;
+            font-size: 13px;
+            opacity: 0.85;
+        }
+
+        /* Paneles contenedores */
+        .panel {
+            margin-bottom: 20px;
+            padding: 24px;
+            border-radius: 10px;
+            background: #fff;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+            border: 1px solid rgba(0,0,0,0.02);
         }
 
         .filtros {
@@ -64,125 +77,180 @@
 
         label {
             display: block;
-            margin-bottom: 5px;
-            color: #34495e;
+            margin-bottom: 6px;
+            color: #486581;
             font-weight: bold;
+            font-size: 13px;
         }
 
         select, input, button {
-            min-height: 42px;
-            border-radius: 4px;
+            min-height: 40px;
+            border-radius: 6px;
             font: inherit;
+            font-size: 13px;
         }
 
         select, input {
             width: 100%;
-            padding: 8px 10px;
-            border: 1px solid #ccc;
+            padding: 8px 12px;
+            border: 1px solid #cbd5e1;
             background: #fff;
+            color: #334155;
+            transition: border-color 0.2s;
+        }
+        
+        select:focus, input:focus {
+            outline: none;
+            border-color: var(--azul-acento);
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.15);
         }
 
+        /* Botones estilo Don Bosco */
         button {
-            padding: 9px 16px;
+            padding: 9px 20px;
             border: 0;
-            background: var(--azul);
+            background: var(--azul-donbosco);
             color: #fff;
             cursor: pointer;
-            font-weight: bold;
+            font-weight: 600;
+            white-space: nowrap;
+            transition: background-color 0.2s, transform 0.1s;
         }
 
         button:hover {
             background: var(--azul-hover);
         }
 
-        button.secundario {
-            background: #7f8c8d;
+        button:active {
+            transform: scale(0.98);
         }
 
+        button.secundario {
+            background: #64748b;
+        }
+        
+        button.secundario:hover {
+            background: #475569;
+        }
+
+        /* Cuadrícula de indicadores resumen */
         .resumen {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 15px;
+            gap: 16px;
+            margin-bottom: 20px;
         }
 
         .indicador {
-            padding: 18px;
-            border-left: 5px solid var(--azul);
-            border-radius: 6px;
+            padding: 18px 20px;
+            border-left: 5px solid var(--azul-acento);
+            border-radius: 10px;
             background: #fff;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.02);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .indicador:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.05);
         }
 
         .indicador span {
             display: block;
-            color: #667;
-            font-size: 14px;
+            color: #64748b;
+            font-size: 11px;
+            text-transform: uppercase;
+            font-weight: 700;
+            letter-spacing: 0.5px;
         }
 
         .indicador strong {
             display: block;
-            margin-top: 6px;
-            color: var(--azul-oscuro);
-            font-size: 24px;
+            margin-top: 4px;
+            color: #1e293b;
+            font-size: 22px;
+            font-weight: 700;
         }
 
+        /* Tarjetas de cuentas en Libro Mayor */
         .cuenta {
             overflow: hidden;
-            margin-bottom: 22px;
+            margin-bottom: 25px;
             border: 1px solid var(--gris-borde);
-            border-radius: 8px;
+            border-radius: 10px;
             background: #fff;
-            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.06);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.04);
         }
 
         .cuenta-encabezado {
             display: flex;
             justify-content: space-between;
             gap: 20px;
-            padding: 18px 20px;
-            background: var(--azul-oscuro);
+            padding: 16px 20px;
+            background: var(--azul-donbosco);
             color: #fff;
+            align-items: center;
         }
 
         .cuenta-encabezado h3 {
             margin: 0;
             color: #fff;
+            font-size: 16px;
+            font-weight: 600;
         }
 
         .cuenta-encabezado p {
-            margin: 5px 0 0;
+            margin: 4px 0 0;
             color: #dbe7f0;
+            font-size: 12px;
         }
 
         .saldo-final {
             text-align: right;
             white-space: nowrap;
+            font-size: 12px;
+            color: #dbe7f0;
         }
 
         .saldo-final strong {
             display: block;
-            margin-top: 4px;
-            font-size: 22px;
+            margin-top: 2px;
+            font-size: 20px;
+            color: #fff;
+            font-weight: 700;
         }
 
         .tabla-contenedor {
             overflow-x: auto;
         }
 
+        /* Estilos de tablas gemelas */
         table {
             width: 100%;
             border-collapse: collapse;
+            font-size: 13.5px;
+            background: white;
         }
 
         th, td {
-            padding: 11px 12px;
-            border-bottom: 1px solid var(--gris-borde);
+            padding: 12px 14px;
+            border-bottom: 1px solid #e2e8f0;
             text-align: left;
         }
 
         th {
-            background: #ecf0f1;
-            color: #34495e;
+            background: #f1f5f9;
+            color: #334155;
+            font-weight: 600;
+            border-bottom: 2px solid var(--gris-borde);
+        }
+
+        tr:nth-child(even) {
+            background-color: #f8fafc;
+        }
+
+        tr:hover {
+            background-color: #f1f5f9;
         }
 
         .numero {
@@ -191,28 +259,38 @@
         }
 
         tfoot td {
-            background: #f7f9fa;
+            background: #f8fafc;
             font-weight: bold;
+            color: #1e293b;
+            border-top: 2px solid var(--gris-borde);
+            border-bottom: 2px solid var(--gris-borde);
         }
 
         .estado {
-            padding: 35px;
-            border-radius: 8px;
+            padding: 30px;
+            border-radius: 10px;
             background: #fff;
-            color: #667;
+            color: #64748b;
             text-align: center;
+            font-style: italic;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
         }
 
         .estado.error {
             color: var(--rojo);
+            font-weight: bold;
+            font-style: normal;
         }
 
+        /* Clases de naturaleza de cuenta */
         .deudora {
-            color: var(--verde);
+            color: var(--verde) !important;
+            font-weight: 600;
         }
 
         .acreedora {
-            color: var(--azul);
+            color: var(--azul-acento) !important;
+            font-weight: 600;
         }
 
         @media (max-width: 850px) {
@@ -225,7 +303,7 @@
             }
 
             .saldo-final {
-                margin-top: 15px;
+                margin-top: 10px;
                 text-align: left;
             }
         }
@@ -233,9 +311,10 @@
 </head>
 <body>
 <main class="container">
-    <section class="panel">
-        <h1>Libro Mayor</h1>
-        <p class="subtitulo">Movimientos contables agrupados por cuenta y ordenados cronológicamente.</p>
+    
+    <section class="encabezado-institucional">
+        <h1>Distribuidora Don Bosco</h1>
+        <p class="subtitulo">Módulo de Libro Mayor: Movimientos contables agrupados por cuenta y ordenados cronológicamente.</p>
     </section>
 
     <section class="panel">

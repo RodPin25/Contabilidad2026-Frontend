@@ -3,168 +3,284 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistema Contable DON BOSCO - Registro de Partidas</title>
+    <title>Distribuidora Don Bosco - Registro de Partidas</title>
     <style>
+      
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f4f6f9;
+            background-color: #f4f6f9; /* Mismo fondo gris limpio */
             margin: 0;
             padding: 20px;
-            color: #333;
+            color: #2d3748; 
         }
+        
         .container {
-            max-width: 900px;
+            max-width: 1200px; 
             margin: 0 auto;
-            background: white;
-            padding: 30px;
-            border-radius: 8px;
+        }
+
+        
+        .encabezado-institucional {
+            background: linear-gradient(135deg, #0d3b5e 0%, #102a43 100%);
+            color: white;
+            padding: 24px 40px;
+            border-radius: 10px;
             box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
         }
-        h2 {
-            color: #2c3e50;
-            border-bottom: 2px solid #3498db;
-            padding-bottom: 10px;
-            margin-top: 0;
+
+        .encabezado-institucional h1 {
+            font-size: 26px;
+            margin: 0 0 6px 0;
+            font-weight: 600;
         }
+
+        .encabezado-institucional p {
+            font-size: 13px;
+            opacity: 0.85;
+            margin: 0;
+            color: #dbe7f0;
+        }
+
+        
+        .contenedor-modulo {
+            background: white;
+            padding: 24px;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+            border: 1px solid rgba(0,0,0,0.02);
+            margin-bottom: 20px;
+        }
+
+        .contenedor-modulo h2 {
+            font-size: 17px;
+            margin: 0 0 16px 0;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #dfe4ea;
+            color: #0d3b5e;
+            font-weight: 600;
+        }
+
+        .contenedor-modulo h3 {
+            font-size: 15px;
+            color: #0d3b5e;
+            margin: 20px 0 12px 0;
+            font-weight: 600;
+        }
+
+        
         .form-group {
             margin-bottom: 15px;
         }
+
         label {
             display: block;
             font-weight: bold;
-            margin-bottom: 5px;
-            color: #34495e;
+            margin-bottom: 6px;
+            color: #486581;
+            font-size: 13px;
         }
+
         input, select, textarea {
             width: 100%;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
+            padding: 10px 14px;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
             box-sizing: border-box;
+            font-size: 13px;
+            background-color: #fff;
+            color: #334155;
+            transition: border-color 0.2s, box-shadow 0.2s;
         }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #3498db;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.15);
+        }
+
         .row {
             display: flex;
             gap: 15px;
             margin-bottom: 15px;
+            flex-wrap: wrap;
         }
+
         .col {
             flex: 1;
+            min-width: 160px;
         }
+
+        
+        .seccion-agregar-cuenta {
+            background: #f8fafc;
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px dashed #cbd5e1;
+            margin-bottom: 15px;
+            align-items: flex-end;
+        }
+
+        
+        .btn {
+            background-color: #0d3b5e;
+            color: white;
+            padding: 10px 22px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 13px;
+            white-space: nowrap;
+            transition: background-color 0.2s, transform 0.1s;
+            min-height: 40px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn:hover {
+            background-color: #092d48;
+        }
+
+        .btn:active {
+            transform: scale(0.98);
+        }
+
+        .btn-success {
+            background-color: #27ae60;
+            width: 100%;
+            padding: 12px;
+            font-size: 15px;
+            margin-top: 20px;
+            box-shadow: 0 4px 6px rgba(39, 174, 96, 0.15);
+        }
+
+        .btn-success:hover {
+            background-color: #219653;
+        }
+
+        .btn-danger {
+            background-color: #c0392b;
+            padding: 6px 14px;
+            font-size: 12px;
+            min-height: auto;
+        }
+
+        .btn-danger:hover {
+            background-color: #941b10;
+        }
+
+        /* ── TABLAS RE-DISEÑADAS GEMELAS ── */
         table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 20px;
+            margin-top: 15px;
+            font-size: 13.5px;
+            background: white;
         }
-        th, td {
-            border: 1px solid #ddd;
-            padding: 10px;
-            text-align: left;
-        }
+
         th {
-            background-color: #34495e;
-            color: white;
+            background-color: #f1f5f9;
+            color: #334155;
+            padding: 12px 14px;
+            text-align: left;
+            font-weight: 600;
+            border-bottom: 2px solid #dfe4ea;
         }
-        .btn {
-            background-color: #3498db;
-            color: white;
-            padding: 10px 15px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-weight: bold;
+
+        td {
+            padding: 12px 14px;
+            border-bottom: 1px solid #e2e8f0;
+            color: #475569;
         }
-        .btn:hover {
-            background-color: #2980b9;
+
+        tr:nth-child(even) {
+            background-color: #f8fafc;
         }
-        .btn-success {
-            background-color: #2ecc71;
-            width: 100%;
-            padding: 12px;
-            font-size: 16px;
-            margin-top: 20px;
-        }
-        .btn-success:hover {
-            background-color: #27ae60;
-        }
-        .btn-danger {
-            background-color: #e74c3c;
-        }
-        .btn-danger:hover {
-            background-color: #c0392b;
+
+        tr:hover {
+            background-color: #f1f5f9;
         }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h2>Registro de Partida Diaria</h2>
+
+    <div class="encabezado-institucional">
+        <h1>Distribuidora Don Bosco</h1>
+        <p><strong>Módulo Contable:</strong> Registro y Control de Partidas Diarias del Ejercicio</p>
+    </div>
     
-    <div class="row">
-        <div class="col">
-            <label for="numPartida">Número de Partida:</label>
-            <input type="number" id="numPartida" value="1" min="1">
+    <div class="contenedor-modulo">
+        <h2>Registro de Partida Diaria</h2>
+        
+        <div class="row">
+            <div class="col">
+                <label for="numPartida">Número de Partida:</label>
+                <input type="number" id="numPartida" value="1" min="1">
+            </div>
+            <div class="col">
+                <label for="fecha">Fecha:</label>
+                <input type="date" id="fecha">
+            </div>
+            <div class="col">
+                <label for="tipoPartida">Tipo de Partida:</label>
+                <select id="tipoPartida">
+                    <option value="Normal">Diario (Normal)</option>
+                    <option value="Apertura">Apertura</option>
+                    <option value="Regularizacion">Regularización IVA</option>
+                    <option value="Cierre">Cierre</option>
+                </select>
+            </div>
         </div>
-        <div class="col">
-            <label for="fecha">Fecha:</label>
-            <input type="date" id="fecha">
+
+        <div class="form-group">
+            <label for="descripcion">Descripción / Glosa de la operación:</label>
+            <textarea id="descripcion" rows="2" placeholder="Ej. Venta de mercadería según factura contable..."></textarea>
         </div>
-        <div class="col">
-            <label for="tipoPartida">Tipo de Partida:</label>
-            <select id="tipoPartida">
-                <option value="Normal">Diario (Normal)</option>
-                <option value="Apertura">Apertura</option>
-                <option value="Regularizacion">Regularización IVA</option>
-                <option value="Cierre">Cierre</option>
-            </select>
+
+        <h3>Cuentas de la Partida</h3>
+        <div class="row seccion-agregar-cuenta">
+            <div class="col" style="flex: 2;">
+                <label for="codigoCuenta">Cuenta Contable Real:</label>
+                <select id="codigoCuenta"></select>
+            </div>
+            <div class="col">
+                <label for="montoDebe">Debe (Q):</label>
+                <input type="number" id="montoDebe" value="0.00" step="0.01">
+            </div>
+            <div class="col">
+                <label for="montoHaber">Haber (Q):</label>
+                <input type="number" id="montoHaber" value="0.00" step="0.01">
+            </div>
+            <div class="col" style="display: flex; align-items: flex-end;">
+                <button class="btn" type="button" onclick="agregarFila()">Agregar</button>
+            </div>
         </div>
+
+        <table id="tablaDetalles">
+            <thead>
+                <tr>
+                    <th>Código Cuenta</th>
+                    <th>Debe (Q)</th>
+                    <th>Haber (Q)</th>
+                    <th>Acción</th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+
+        <button class="btn btn-success" type="button" onclick="guardarPartida()">Guardar Partida DB</button>
     </div>
-
-    <div class="form-group">
-        <label for="descripcion">Descripción:</label>
-        <textarea id="descripcion" rows="2" placeholder="Ej. Venta de mercadería según factura..."></textarea>
-    </div>
-
-    <h3>Cuentas de la Partida</h3>
-    <div class="row" style="background: #ecf0f1; padding: 15px; border-radius: 4px;">
-        <div class="col" style="flex: 2;">
-            <label for="codigoCuenta">Cuenta Contable Real:</label>
-            <select id="codigoCuenta"></select>
-        </div>
-        <div class="col">
-            <label for="montoDebe">Debe (Q):</label>
-            <input type="number" id="montoDebe" value="0.00" step="0.01">
-        </div>
-        <div class="col">
-            <label for="montoHaber">Haber (Q):</label>
-            <input type="number" id="montoHaber" value="0.00" step="0.01">
-        </div>
-        <div class="col" style="display: flex; align-items: flex-end;">
-            <button class="btn" type="button" onclick="agregarFila()">Agregar</button>
-        </div>
-    </div>
-
-    <table id="tablaDetalles">
-        <thead>
-            <tr>
-                <th>Código Cuenta</th>
-                <th>Debe (Q)</th>
-                <th>Haber (Q)</th>
-                <th>Acción</th>
-            </tr>
-        </thead>
-        <tbody>
-        </tbody>
-    </table>
-
-    <button class="btn btn-success" type="button" onclick="guardarPartida()">Guardar Partida DB</button>
 </div>
 
 <script>
     let detallesPartida = [];
-    // URL base apuntando al puerto oficial 5000 de Flask del equipo
     const API_BASE_URL = 'http://127.0.0.1:5000';
 
-    // Carga las cuentas reales mapeadas desde la logica de Sochito
     async function cargarCuentas() {
         try {
             const response = await fetch(`${API_BASE_URL}/cuentas-disponibles`);
@@ -215,7 +331,6 @@
             return;
         }
 
-        // Mapeamos idCuenta de forma estricta para la tabla intermedia AsientoDiario
         detallesPartida.push({
             idCuenta: idCuenta,
             nombre_pantalla: textoCuenta,
@@ -239,7 +354,7 @@
                 <td>${detalle.nombre_pantalla}</td>
                 <td>Q${detalle.debe.toFixed(2)}</td>
                 <td>Q${detalle.haber.toFixed(2)}</td>
-                <td><button class="btn btn-danger" onclick="eliminarFila(${index})">Eliminar</button></td>
+                <td><button class="btn btn-danger" onclick="eliminarFila(${index})">🗑 Eliminar</button></td>
             `;
             tbody.appendChild(fila);
         });
